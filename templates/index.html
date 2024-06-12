@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Watering App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        .plant-card {
+            transition: background-color 1s;
+            height: 100%; /* Ensures each card fills its column height */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body {
+            flex-grow: 1; /* Allow the card body to expand within the flex container */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>My plants &hearts;</h1>
+        <a href="{{ url_for('add_plant') }}" class="btn btn-primary mb-4">Add New Plant</a>
+        <div class="row" id="plant-grid">
+            {% for plant in plants %}
+            <div class="col-md-4 mb-4">
+                <div class="card plant-card" data-watering-interval="{{ plant[4] }}" data-last-watered="{{ plant[3] }}">
+                    <img src="{{ url_for('uploaded_file', filename=plant[2]) }}" class="card-img-top" alt="{{ plant[1] }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ plant[1] }}</h5>
+                        <p class="card-text">Last watered: {{ plant[3] }}</p>
+                        <p class="card-text">Watering interval: {{ plant[4] }} days</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function updatePlantCards() {
+            const plantCards = document.querySelectorAll('.plant-card');
+            const now = new Date();
+
+            plantCards.forEach(card => {
+                const lastWatered = new Date(card.dataset.lastWatered);
+                const wateringInterval = parseInt(card.dataset.wateringInterval);
+                const nextWatering = new Date(lastWatered);
+                nextWatering.setDate(nextWatering.getDate() + wateringInterval);
+
+                const daysLeft = Math.ceil((nextWatering - now) / (1000 * 60 * 60 * 24));
+                const percentage = Math.max(0, Math.min(100, ((wateringInterval - daysLeft) / wateringInterval) * 100));
+                
+                // Calculate the blue component
+                const blue = Math.round(255 - (percentage * 1.5)); // Adjusting the blue component
+
+                // Generate the RGB color based on the blue component
+                const color = `rgb(135, 206, ${255 - blue})`; // Using fixed values for red and green, adjusting blue dynamically
+                card.style.backgroundColor = color;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePlantCards();
+            setInterval(updatePlantCards, 3600000); // Update every hour
+        });
+
+        const socket = io();
+        socket.on('update', (data) => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>

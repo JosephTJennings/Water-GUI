@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Plant</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Add New Plant</h1>
+        <form action="{{ url_for('add_plant') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Plant Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Plant Image</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <label for="last_watered">Last Watered Date</label>
+                <input type="date" class="form-control" id="last_watered" name="last_watered" required>
+            </div>
+            <div class="form-group">
+                <label for="watering_interval">Watering Interval (days)</label>
+                <input type="number" class="form-control" id="watering_interval" name="watering_interval" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Plant</button>
+        </form>
+    </div>
+</body>
+</html>
