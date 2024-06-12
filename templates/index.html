@@ -3,25 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Watering App</title>
+    <title>Plant Schedule &hearts;</title>
+    <link rel="icon" type="image/x-icon" href="./static/images/icon.jpg">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <style>
+        body {
+            background-color: #1a1a1a; /* Dark background color */
+            color: #e0e0e0; /* Light text color */
+            padding-top: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+
         .plant-card {
-            transition: background-color 1s;
-            height: 100%; /* Ensures each card fills its column height */
+            background-color: #2a2a2a; /* Darker card background */
+            transition: background-color 0.3s ease;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .plant-card:hover {
+            background-color: #3a3a3a; /* Darker on hover */
         }
 
         .card-body {
-            flex-grow: 1; /* Allow the card body to expand within the flex container */
+            flex-grow: 1;
+        }
+
+        .card-title, .card-text {
+            color: #e0e0e0; /* Light text color */
+        }
+
+        .btn-primary {
+            background-color: #388e3c; /* Green primary button */
+            border-color: #388e3c;
+        }
+
+        .btn-primary:hover {
+            background-color: #2e7d32; /* Darker green on hover */
+            border-color: #2e7d32;
         }
     </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h1>My plants &hearts;</h1>
+        <h1 style="color: #e0e0e0;">My plants &hearts;</h1>
         <a href="{{ url_for('add_plant') }}" class="btn btn-primary mb-4">Add New Plant</a>
         <div class="row" id="plant-grid">
             {% for plant in plants %}
