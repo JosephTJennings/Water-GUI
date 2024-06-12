@@ -27,6 +27,7 @@
             border: 1px solid #333;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer; /* Add cursor pointer for clickable effect */
         }
 
         .plant-card:hover {
@@ -59,13 +60,18 @@
         <div class="row" id="plant-grid">
             {% for plant in plants %}
             <div class="col-md-4 mb-4">
-                <div class="card plant-card" data-watering-interval="{{ plant[4] }}" data-last-watered="{{ plant[3] }}">
+                <div class="card plant-card" 
+                     data-plant-id="{{ plant[0] }}" 
+                     data-watering-interval="{{ plant[4] }}" 
+                     data-last-watered="{{ plant[3] }}"
+                     onclick="waterPlant(this)">
                     <img src="{{ url_for('uploaded_file', filename=plant[2]) }}" class="card-img-top" alt="{{ plant[1] }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ plant[1] }}</h5>
                         <p class="card-text">Last watered: {{ plant[3] }}</p>
                         <p class="card-text">Watering interval: {{ plant[4] }} days</p>
                     </div>
+                    <input type="hidden" class="plant-id" value="{{ plant[0] }}">
                 </div>
             </div>
             {% endfor %}
@@ -84,14 +90,59 @@
                 nextWatering.setDate(nextWatering.getDate() + wateringInterval);
 
                 const daysLeft = Math.ceil((nextWatering - now) / (1000 * 60 * 60 * 24));
-                const percentage = Math.max(0, Math.min(100, ((wateringInterval - daysLeft) / wateringInterval) * 100));
-                
-                // Calculate the blue component
-                const blue = Math.round(255 - (percentage * 1.5)); // Adjusting the blue component
 
-                // Generate the RGB color based on the blue component
-                const color = `rgb(135, 206, ${255 - blue})`; // Using fixed values for red and green, adjusting blue dynamically
+                let color;
+
+                if (daysLeft <= 0) {
+                    color = "#0000FF"; // Blue
+                } else if (daysLeft < wateringInterval) {
+                    const blueIntensity = Math.round((1 - daysLeft / wateringInterval) * 255);
+                    color = `#${blueIntensity.toString(16).padStart(2, '0').repeat(2)}FF`;
+                } else {
+                    color = "#75B1B7"; // Light blue
+                }
+
                 card.style.backgroundColor = color;
+
+                // Update next water text
+                const nextWaterElement = card.querySelector('.next-water');
+                nextWaterElement.textContent = `Next water: ${calculateNextWater(lastWatered, wateringInterval)}`;
+            });
+        }
+
+        function calculateNextWater(lastWatered, intervalDays) {
+            const nextWaterDate = new Date(lastWatered);
+            nextWaterDate.setDate(nextWaterDate.getDate() + intervalDays);
+            const formattedDate = `${nextWaterDate.getFullYear()}-${padZero(nextWaterDate.getMonth() + 1)}-${padZero(nextWaterDate.getDate())}`;
+            return formattedDate;
+        }
+
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function waterPlant(card) {
+            const plantId = card.dataset.plantId;
+            const now = new Date();
+
+            // Update last watered date on the server
+            fetch(`/update_last_watered/${plantId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ lastWatered: now.toISOString() })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Reload the page or update UI as needed
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle errors here
             });
         }
 
