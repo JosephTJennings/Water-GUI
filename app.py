@@ -96,6 +96,32 @@ def add_plant():
         return redirect(url_for('index'))
     return render_template('add_plant.html')
 
+
+@app.route('/water/<int:plant_id>', methods=['PUT'])
+def water_plant(plant_id):
+    data = request.get_json()
+    if 'lastWatered' not in data:
+        return jsonify({"error": "Missing lastWatered in request body"}), 400
+
+    last_watered = data['lastWatered']
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE plants
+        SET last_watered = ?
+        WHERE id = ?
+    ''', (last_watered, plant_id))
+    
+    if cursor.rowcount == 0:
+        conn.close()
+        return jsonify({"error": "Plant not found"}), 404
+
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True}), 200
+
+
 @app.route('/static/images/<filename>')
 def uploaded_file(filename):
     return send_from_directory(IMAGE_FOLDER, filename)

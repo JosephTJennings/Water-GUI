@@ -168,7 +168,7 @@
             const now = new Date();
 
             // Update last watered date on the server
-            fetch(`/update_last_watered/${plantId}`, {
+            fetch(`/water/${plantId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -186,6 +186,7 @@
                     console.error('Error:', error);
                     // Handle errors here
                 });
+            updatePlantCards();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
