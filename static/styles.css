@@ -1,0 +1,97 @@
+/* styles.css */
+
+/* Google Material Design Inspired Styles */
+body {
+    background-color: #FAFAFA;
+    color: #212121;
+    font-family: 'Roboto', sans-serif;
+    padding-top: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 900px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    background-color: #4285F4;
+    border-color: #4285F4;
+}
+
+.btn-primary:hover {
+    background-color: #357AE8;
+    border-color: #357AE8;
+}
+
+.plant-card {
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, background-color 0.3s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.plant-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    object-fit: cover;
+    height: 200px;
+}
+
+.card-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #212121;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #757575;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.dark-mode .plant-card {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .plant-card:hover {
+    background-color: #3a3a3a;
+}
+
+.dark-mode .card-title, .dark-mode .card-text {
+    color: #e0e0e0;
+}
+
+.dark-mode .btn-primary {
+    background-color: #388e3c;
+    border-color: #388e3c;
+}
+
+.dark-mode .btn-primary:hover {
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+}
