@@ -115,24 +115,32 @@
                 const daysLeft = Math.ceil((nextWatering - now) / (1000 * 60 * 60 * 24));
                 let color;
 
-                if (daysLeft <= 0) {
-                    color = "#FFCDD2"; // Light Red
+                if (daysLeft <= 0) { // needs to be watered today
+                    color = "#76cfaa";
                 } else if (daysLeft < wateringInterval) {
-                    const redIntensity = Math.round((1 - daysLeft / wateringInterval) * 255);
-                    color = `rgb(255, ${255 - redIntensity}, ${255 - redIntensity})`;
+                    const percentage = Math.max(0, Math.min(100, ((wateringInterval - daysLeft) / wateringInterval) * 100));
+                    const nonblue = Math.round(250 - (percentage * 1.5)); // Adjusting the blue component
+                    color = `rgb(${nonblue}, ${nonblue}, 250)`; // Using fixed values for red and green, adjusting blue dynamically
                 } else {
-                    color = "#C8E6C9"; // Light Green
+                    color = "#ffffff"; // Blue
                 }
 
                 card.style.backgroundColor = color;
 
+                // Remove existing next water element if it exists
+                const existingNextWaterElement = card.querySelector('.next-water');
+                if (existingNextWaterElement) {
+                    existingNextWaterElement.remove();
+                }
+
                 // Update next water text
                 const nextWaterElement = document.createElement('p');
                 nextWaterElement.classList.add('card-text', 'next-water');
-                nextWaterElement.textContent = `Next water: ${calculateNextWater(lastWatered, wateringInterval)}`;
+                nextWaterElement.textContent = `Next water: ${daysLeft} days`;
                 card.querySelector('.card-body').appendChild(nextWaterElement);
             });
         }
+
 
         function calculateNextWater(lastWatered, intervalDays) {
             const nextWaterDate = new Date(lastWatered);
@@ -152,7 +160,6 @@
             } else {
                 document.body.classList.remove('dark-mode');
             }
-            console.log(hour);
         }
 
 
